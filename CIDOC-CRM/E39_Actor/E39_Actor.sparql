@@ -1,4 +1,6 @@
-#1
+#1 Inverse. All the collections made by an Actor
+
+
 PREFIX  org:  <http://example.com/org/>
 PREFIX  rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX  wdt:  <http://www.wikidata.org/prop/direct/>
@@ -7,32 +9,9 @@ PREFIX  rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX  wd:   <http://www.wikidata.org/entity/>
 PREFIX  crm:  <http://www.cidoc-crm.org/cidoc-crm/>
 
-SELECT DISTINCT  ?value
-WHERE
-  {	?subject a 			crm:E39_Actor;
-            			^crm:P14_carried_out_by ?production.
-  	?production a 		crm:E12_Production;
-             			^crm:P108i_was_produced_by  ?collection .
-  	?collection a 		crm:E78_Collection;
-                  		crm:P1_is_identified_by  ?name_identifier .
-    ?name_identifier a 	crm:E41_Appellation ;
-						rdfs:label            ?value.
-  }
-  
-#2
-PREFIX  org:  <http://example.com/org/>
-PREFIX  rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX  wdt:  <http://www.wikidata.org/prop/direct/>
-PREFIX  skos: <http://www.w3.org/2004/02/skos/core#>
-PREFIX  rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX  wd:   <http://www.wikidata.org/entity/>
-PREFIX  crm:  <http://www.cidoc-crm.org/cidoc-crm/>
-
-SELECT DISTINCT  ?value
-WHERE
-  {	?subject a 			crm:E39_Actor;
-            			^crm:P14_carried_out_by/
-             			^crm:P108i_was_produced_by  /
-                  		crm:P1_is_identified_by  /
-						rdfs:label            ?value.
-  }
+SELECT DISTINCT ?value WHERE {
+  ?subject rdf:type crm:E39_Actor;
+    (^crm:P14_carried_out_by/^crm:P108i_was_produced_by) ?collection.
+  ?collection rdf:type crm:E78_Collection;
+    (crm:P1_is_identified_by/rdfs:label) ?value.
+}
