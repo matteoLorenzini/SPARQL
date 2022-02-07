@@ -1,0 +1,59 @@
+#1
+
+PREFIX  org:  <http://example.com/org/>
+PREFIX  rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX  wdt:  <http://www.wikidata.org/prop/direct/>
+PREFIX  skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX  rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX  wd:   <http://www.wikidata.org/entity/>
+PREFIX  crm:  <http://www.cidoc-crm.org/cidoc-crm/>
+
+SELECT DISTINCT  ?value
+WHERE
+  { ?subject  rdf:type              crm:E78_Collection ;
+              crm:P108i_was_produced_by  ?production .
+    ?production  rdf:type           crm:E12_Production ;
+              crm:P14_carried_out_by  ?actor_role ;
+              crm:P14_carried_out_by  ?actor .
+    ?actor    rdf:type              crm:E39_Actor ;
+              crm:P2_has_type  <https://resource.swissartresearch.net/actor%20creator/actor%20creator>;
+              crm:P1_is_identified_by  ?name_identifier .
+    ?name_identifier
+              rdf:type              crm:E41_Appellation ;
+              crm:P2_has_type       <https://resource.swissartresearch.net/types/Preferred%20Name> ;
+              rdfs:label            ?actor_creator_label .
+    ?actor_role  rdf:type           crm:E39_Actor ;
+                 crm:P2_has_type  <https://resource.swissartresearch.net/actor%20role/actor%20role>;
+              rdfs:label            ?role_label
+ 
+  	BIND(concat(str(?actor_creator_label )," in the role of ",str(?role_label)) as ?value)
+  }
+  
+#2
+
+PREFIX  org:  <http://example.com/org/>
+PREFIX  rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX  wdt:  <http://www.wikidata.org/prop/direct/>
+PREFIX  skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX  rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX  wd:   <http://www.wikidata.org/entity/>
+PREFIX  crm:  <http://www.cidoc-crm.org/cidoc-crm/>
+
+SELECT DISTINCT  ?value
+WHERE
+  { ?subject  rdf:type              crm:E78_Collection ;
+              crm:P108i_was_produced_by  ?production .
+    ?production  rdf:type           crm:E12_Production ;
+         
+              crm:P14_carried_out_by  ?actor .
+    ?actor    rdf:type              crm:E39_Actor ;
+              crm:P2_has_type  <https://resource.swissartresearch.net/actor%20creator/actor%20creator>;
+              crm:P1_is_identified_by  ?name_identifier .
+    ?name_identifier
+              rdf:type              crm:E41_Appellation ;
+              crm:P2_has_type       <https://resource.swissartresearch.net/types/Preferred%20Name> ;
+              rdfs:label            ?value .
+   
+  }
+
+
