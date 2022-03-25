@@ -1,0 +1,101 @@
+#Number of statement in each named graph
+
+SELECT ?graphName
+       ( COUNT ( * ) AS ?count )
+WHERE
+  {
+    GRAPH ?graphName
+      {
+        ?s ?p ?o
+      }
+  }
+GROUP BY ?graphName
+
+
+PREFIX  org:  <http://example.com/org/>
+PREFIX  rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX  wdt:  <http://www.wikidata.org/prop/direct/>
+PREFIX  skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX  rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX  wd:   <http://www.wikidata.org/entity/>
+PREFIX  crm:  <http://www.cidoc-crm.org/cidoc-crm/>
+
+SELECT ?c
+       ( COUNT ( * ) AS ?count )
+WHERE
+  {
+    GRAPH <file://E22_2_gta.rdf-26-04-2021-09-14-47>
+        {[] a ?c .}
+  }
+GROUP BY ?c
+
+
+#Show all the graphs in the triplestore
+
+PREFIX org:   <http://example.com/org/>
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos:  <http://www.w3.org/2004/02/skos/core#>
+PREFIX wdt:   <http://www.wikidata.org/prop/direct/>
+PREFIX wd:    <http://www.wikidata.org/entity/>
+
+SELECT DISTINCT ?g 
+
+WHERE {
+
+  GRAPH ?g { ?s ?p ?o }
+}
+
+#Delete specific graph from the triplestore
+
+PREFIX org:   <http://example.com/org/>
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos:  <http://www.w3.org/2004/02/skos/core#>
+PREFIX wdt:   <http://www.wikidata.org/prop/direct/>
+PREFIX wd:    <http://www.wikidata.org/entity/>
+
+DELETE
+
+{
+  GRAPH <file://E78_1.2.rdf-19-02-2021-02-17-17> {?s ?p ?o}
+}
+WHERE
+{
+  GRAPH <file://E78_1.2.rdf-19-02-2021-02-17-17> {?s ?p ?o}
+}
+
+#Find information about specific graph
+
+PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX crmgeo: <http://www.ics.forth.gr/isl/CRMgeo/>
+PREFIX crmsci: <http://www.ics.forth.gr/isl/CRMsci/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+PREFIX kid: <http://kerameikos.org/id/>
+PREFIX kon: <http://kerameikos.org/ontology#>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+
+
+SELECT * WHERE {
+  <https://www.britishmuseum.org/collection/object/G_1888-0601-716> ?p ?o
+}
+
+#Complete description about graph
+
+PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX crmgeo: <http://www.ics.forth.gr/isl/CRMgeo/>
+PREFIX crmsci: <http://www.ics.forth.gr/isl/CRMsci/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+PREFIX kid: <http://kerameikos.org/id/>
+PREFIX kon: <http://kerameikos.org/ontology#>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+
+DESCRIBE <https://www.britishmuseum.org/collection/object/G_1888-0601-716> 
