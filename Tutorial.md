@@ -1,9 +1,11 @@
-# Tutorial
+# Querying CIDOC-CRM
 
-### https://researchportal-public.gta.arch.ethz.ch/resource/sparql
+This document is intended to provide some examples of how to access resources defined using the CIDOC-CRM ontology.
+
+The SPARQL endpoint used is accessible at the following link https://researchportal-public.gta.arch.ethz.ch/resource/sparql
 
 
-# SPARQL query architecture
+# Architecture of a sparql query
 
 ## Declare prefix shortcuts
 
@@ -126,7 +128,9 @@ PREFIX  crm:  <http://www.cidoc-crm.org/cidoc-crm/>
 
 DESCRIBE <https://resource.swissartresearch.net/archivalobject/22453> 
 ```
-# Gneric Overview about the triplestore
+# Overview of the triplestore
+
+Following queries are meant to provide the end user with a general overview of how data are structured in a triple store if you do not know how resources are structured.
 
 ## Show me all the graphs
 ```
@@ -173,7 +177,7 @@ WHERE
 GROUP BY ?c
 ```
 
-# Specific query 
+
 
 ## All the E78_Collection
 
@@ -211,9 +215,11 @@ select ?e78 (count(?o) AS ?no) where {
 group by ?e78
 ORDER BY DESC (?no)
 ```
+# Description queries 
 
+With the following queries, the user can see how the information is structured using the CIDOC-CRM ontology
 
-## If you don't know the mapping structure of E78 use describe 
+## Retrieve the full graph of a specific resource
 
 
 ```
@@ -234,6 +240,8 @@ WHERE
   }
 ```
 
+OR
+
 ```
 PREFIX  org:  <http://example.com/org/>
 PREFIX  rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -244,10 +252,12 @@ PREFIX  wd:   <http://www.wikidata.org/entity/>
 PREFIX  crm:  <http://www.cidoc-crm.org/cidoc-crm/>
 
 
-DESCRIBE <https://resource.swissartresearch.net/archivalobject/22453> 
+DESCRIBE <https://resource.swissartresearch.net/archivalobject/21731> 
 ```
 
-## Collection name and Collection creator
+# Specific queries (E78_Collection)
+
+## Retrieve the name of a collection and the name of the collection creator
 
 ```
 PREFIX  org:  <http://example.com/org/>
@@ -273,13 +283,43 @@ WHERE
               crm:P1_is_identified_by  ?actor_appellation .
     ?actor_appellation
               rdf:type              crm:E41_Appellation ;
-              crm:P2_has_type       <https://resource.swissartresearch.net/types/Preferred%20Name>;
-              rdfs:label ?label
+              crm:P2_has_type       <https://resource.swissartresearch.net/types/Preferred%20Name> ;
+              rdfs:label            ?label
   }
 
 ```
 
-## Collection produced in Zollikon ask, prepare, process, analyze, share, and act.
+## Retrive the production place of a collection 
+
+```
+
+PREFIX  org:  <http://example.com/org/>
+PREFIX  rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX  wdt:  <http://www.wikidata.org/prop/direct/>
+PREFIX  skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX  rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX  wd:   <http://www.wikidata.org/entity/>
+PREFIX  crm:  <http://www.cidoc-crm.org/cidoc-crm/>
+
+SELECT  ?appellation ?label
+WHERE
+  { ?subject  rdf:type              crm:E78_Collection ;
+              crm:P1_is_identified_by  ?name_identifier ;
+              crm:P108i_was_produced_by  ?production .
+    ?name_identifier
+              rdf:type              crm:E41_Appellation ;
+              rdfs:label            ?appellation .
+    ?production  rdf:type           crm:E12_Production ;
+              crm:P7_took_place_at  ?value .
+    ?value    rdf:type              crm:E53_Place ;
+              crm:P1_is_identified_by  ?e41 .
+    ?e41      rdf:type              crm:E41_Appellation ;
+              rdfs:label            ?label
+  }
+
+```
+
+## Retrieve the collections produced in a specific place 
 
 ```
 PREFIX  org:  <http://example.com/org/>
@@ -309,7 +349,7 @@ WHERE
   }
   ```
 
-  ## Collection produced beween time span
+  ## Retrieve the collections produced beween a specific time span
 
   ```
 PREFIX  xsd:  <http://www.w3.org/2001/XMLSchema#>
@@ -332,3 +372,64 @@ WHERE
               rdfs:label            ?label_preferred_name
   }
   ```
+
+  # Specific queries (E53_Place)
+
+  ## Retrieve all the person born in a place (inverse)
+
+  ```
+PREFIX  org:  <http://example.com/org/>
+PREFIX  rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX  wdt:  <http://www.wikidata.org/prop/direct/>
+PREFIX  skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX  rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX  wd:   <http://www.wikidata.org/entity/>
+PREFIX  crm:  <http://www.cidoc-crm.org/cidoc-crm/>
+
+SELECT DISTINCT  ?Place ?Person
+WHERE
+  { ?subject  rdf:type  crm:E53_Place ;
+             ^crm:P7_took_place_at ?birth ;
+             crm:P1_is_identified_by  ?name_identifier .
+    ?name_identifier
+              rdf:type              crm:E41_Appellation ;
+              rdfs:label            ?Place .
+    ?birth    rdf:type              crm:E67_Birth .
+    ?birth ^crm:P98i_was_born ?value .
+    ?value    rdf:type              crm:E21_Person ;
+              crm:P1_is_identified_by  ?appellation .
+    ?appellation  rdf:type          crm:E41_Appellation ;
+              rdfs:label            ?Person
+  }
+  ```
+
+  ## Retrieve the production place of E22_Man-Made_Object
+
+  ```
+PREFIX  org:  <http://example.com/org/>
+PREFIX  rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX  wdt:  <http://www.wikidata.org/prop/direct/>
+PREFIX  skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX  rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX  wd:   <http://www.wikidata.org/entity/>
+PREFIX  crm:  <http://www.cidoc-crm.org/cidoc-crm/>
+
+SELECT DISTINCT  ?Appellation ?Place_Appellation
+WHERE
+  { ?subject  rdf:type              crm:E22_Man-Made_Object ;
+              crm:P1_is_identified_by  ?name_identifier ;
+              crm:P108i_was_produced_by  ?production .
+    ?name_identifier
+              rdf:type              crm:E41_Appellation ;
+              rdfs:label            ?Appellation .
+    ?production  rdf:type           crm:E12_Production ;
+              crm:P7_took_place_at  ?value .
+    ?value    rdf:type              crm:E53_Place ;
+              crm:P1_is_identified_by  ?place_appellation .
+    ?place_appellation
+              rdf:type              crm:E41_Appellation ;
+              rdfs:label            ?Place_Appellation
+  }
+
+  ```
+
